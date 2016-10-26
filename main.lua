@@ -42,7 +42,7 @@ function love.update()
 	for i=1,#u do
 		h[i] = projection(u[i])
 	end
-	allFaces = array_concat(v:makeFaces(p), u:makeFaces(h))
+	allFaces = array_concat(v:makeFaces(p), u:makeFaces(h), axis_face)
 	if love.keyboard.isDown('z') then
         speed = speed - 0.001
     end
