@@ -6,6 +6,13 @@ function projection(point)
 	return {x = point.x/b, y = point.y/b}
 end
 
+-- Поворот навколо OZ
+function rotateZ(ob, alpha)
+	return {x = ob.x*math.cos(alpha)+ob.y*math.sin(alpha), 
+			y = -ob.x*math.sin(alpha)+ob.y*math.cos(alpha),
+			z = ob.z}
+end
+
 -- Малювання полігонів
 function Draw(table_faces)
 	for j=1,#table_faces do
