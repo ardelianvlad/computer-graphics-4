@@ -2,6 +2,20 @@ require('functions')
 
 -- ПЛАТОНОВІ ТІЛА
 
+-- Створення граней і z-індексів
+function Faces(faces, t)
+	for i=1,#faces do
+		faces[i].list = {}
+		buf = 0
+		for j,k in ipairs(faces[i].verticles) do
+			table.insert(faces[i].list, t[k].x)
+			table.insert(faces[i].list, t[k].y)
+			buf = buf + t[k].z
+		end
+		faces[i].z_min = buf/(#faces[i].verticles)
+	end
+end
+
 -- Тетраедр
 Tetrahedron = {}
 
@@ -14,13 +28,14 @@ Tetrahedron.new = function(a, dx, dy, dz)
 	tetra[3] = Point.new3(a+dx,-a+dy,-a+dz)
 	tetra[4] = Point.new3(a+dx,a+dy,a+dz)
 
-	-- Створеня списку полінів та z-індексів
+	-- Створеня списку полігонів та z-індексів
 	tetra.makeFaces = function(t, p)
 		facesT = {}
-		facesT[1] = {list = {p[1].x, p[1].y, p[2].x, p[2].y, p[3].x, p[3].y}, z_index = (t[1].z + t[2].z + t[3].z)/3}
-		facesT[2] = {list = {p[1].x, p[1].y, p[3].x, p[3].y, p[4].x, p[4].y}, z_index = (t[1].z + t[3].z + t[4].z)/3}
-		facesT[3] = {list = {p[2].x, p[2].y, p[3].x, p[3].y, p[4].x, p[4].y}, z_index = (t[2].z + t[3].z + t[4].z)/3}
-		facesT[4] = {list = {p[1].x, p[1].y, p[2].x, p[2].y, p[4].x, p[4].y}, z_index = (t[1].z + t[2].z + t[4].z)/3}
+		facesT[1] = {verticles = {1, 2, 3}}
+		facesT[2] = {verticles = {1, 3, 4}}
+		facesT[3] = {verticles = {2, 3, 4}}
+		facesT[4] = {verticles = {1, 2, 4}}
+		Faces(facesT, t)
 		return facesT
 	end
 
@@ -47,12 +62,13 @@ Cube.new = function(b, dx, dy, dz)
 	-- Створеня списку полінів та z-індексів
 	cube.makeFaces = function(t, p)
 		facesCube = {}
-		facesCube[1] = {list = {p[1].x, p[1].y, p[2].x, p[2].y, p[3].x, p[3].y, p[4].x, p[4].y}, z_index = (t[1].z + t[2].z + t[3].z + t[4].z)/4}
-		facesCube[2] = {list = {p[5].x, p[5].y, p[6].x, p[6].y, p[7].x, p[7].y, p[8].x, p[8].y}, z_index = (t[5].z + t[6].z + t[7].z + t[8].z)/4}
-		facesCube[3] = {list = {p[1].x, p[1].y, p[2].x, p[2].y, p[6].x, p[6].y, p[5].x, p[5].y}, z_index = (t[1].z + t[2].z + t[6].z + t[5].z)/4}
-		facesCube[4] = {list = {p[3].x, p[3].y, p[4].x, p[4].y, p[8].x, p[8].y, p[7].x, p[7].y}, z_index = (t[3].z + t[4].z + t[8].z + t[7].z)/4}
-		facesCube[5] = {list = {p[2].x, p[2].y, p[3].x, p[3].y, p[7].x, p[7].y, p[6].x, p[6].y}, z_index = (t[2].z + t[3].z + t[7].z + t[6].z)/4}
-		facesCube[6] = {list = {p[1].x, p[1].y, p[4].x, p[4].y, p[8].x, p[8].y, p[5].x, p[5].y}, z_index = (t[1].z + t[4].z + t[8].z + t[5].z)/4}
+		facesCube[1] = {verticles = {1, 2, 3, 4}}
+		facesCube[2] = {verticles = {5, 6, 7, 8}}
+		facesCube[3] = {verticles = {1, 2, 6, 5}}
+		facesCube[4] = {verticles = {3, 4, 8, 7}}
+		facesCube[5] = {verticles = {2, 3, 7, 6}}
+		facesCube[6] = {verticles = {1, 4, 8, 5}}
+		Faces(facesCube, t)
 		return facesCube
 	end
 
@@ -77,14 +93,15 @@ Octahedron.new = function(c, dx, dy, dz)
 	-- Створеня списку полінів та z-індексів
 	octa.makeFaces = function(t, p)
 		facesOct = {}
-		facesOct[1] = {list = {p[1].x, p[1].y, p[4].x, p[4].y, p[5].x, p[5].y}, z_index = (t[1].z + t[4].z + t[5].z)/3}
-		facesOct[2] = {list = {p[1].x, p[1].y, p[3].x, p[3].y, p[4].x, p[4].y}, z_index = (t[1].z + t[3].z + t[4].z)/3}
-		facesOct[3] = {list = {p[1].x, p[1].y, p[3].x, p[3].y, p[6].x, p[6].y}, z_index = (t[1].z + t[3].z + t[6].z)/3}
-		facesOct[4] = {list = {p[1].x, p[1].y, p[5].x, p[5].y, p[6].x, p[6].y}, z_index = (t[1].z + t[5].z + t[6].z)/3}
-		facesOct[5] = {list = {p[2].x, p[2].y, p[4].x, p[4].y, p[5].x, p[5].y}, z_index = (t[2].z + t[4].z + t[5].z)/3}
-		facesOct[6] = {list = {p[2].x, p[2].y, p[3].x, p[3].y, p[4].x, p[4].y}, z_index = (t[2].z + t[3].z + t[4].z)/3}
-		facesOct[7] = {list = {p[2].x, p[2].y, p[3].x, p[3].y, p[6].x, p[6].y}, z_index = (t[2].z + t[3].z + t[6].z)/3}
-		facesOct[8] = {list = {p[2].x, p[2].y, p[5].x, p[5].y, p[6].x, p[6].y}, z_index = (t[2].z + t[5].z + t[6].z)/3}
+		facesOct[1] = {verticles = {1, 4, 5}}
+		facesOct[2] = {verticles = {1, 3, 4}}
+		facesOct[3] = {verticles = {1, 3, 6}}
+		facesOct[4] = {verticles = {1, 5, 6}}
+		facesOct[5] = {verticles = {2, 4, 5}}
+		facesOct[6] = {verticles = {2, 3, 4}}
+		facesOct[7] = {verticles = {2, 3, 6}}
+		facesOct[8] = {verticles = {2, 5, 6}}
+		Faces(facesOct, t)
 		return facesOct
 	end
 
@@ -125,30 +142,19 @@ Dodecahedron.new = function(c, dx, dy, dz)
 	-- Створеня списку полінів та z-індексів
 	dodeca.makeFaces = function(t, p)
 		facesD = {}
-		facesD[1] = {list = {p[2].x, p[2].y, p[11].x, p[11].y, p[7].x, p[7].y, p[14].x, p[14].y, p[13].x, p[13].y},
-			z_index = (t[2].z + t[11].z + t[7].z + t[14].z + t[13].z)/5}
-		facesD[2] = {list = {p[2].x, p[2].y, p[11].x, p[11].y, p[12].x, p[12].y, p[5].x, p[5].y, p[19].x, p[19].y},
-			z_index = (t[2].z + t[11].z + t[12].z + t[5].z + t[19].z)/5}
-		facesD[3] = {list = {p[2].x, p[2].y, p[13].x, p[13].y, p[1].x, p[1].y, p[17].x, p[17].y, p[19].x, p[19].y},
-			z_index = (t[2].z + t[13].z + t[1].z + t[17].z + t[19].z)/5}
-		facesD[4] = {list = {p[11].x, p[11].y, p[7].x, p[7].y, p[20].x, p[20].y, p[8].x, p[8].y, p[12].x, p[12].y},
-			z_index = (t[11].z + t[7].z + t[20].z + t[8].z + t[12].z)/5}
-		facesD[5] = {list = {p[3].x, p[3].y, p[17].x, p[17].y, p[19].x, p[19].y, p[5].x, p[5].y, p[15].x, p[15].y},
-			z_index = (t[3].z + t[17].z + t[19].z + t[5].z + t[15].z)/5}
-		facesD[6] = {list = {p[13].x, p[13].y, p[14].x, p[14].y, p[4].x, p[4].y, p[9].x, p[9].y, p[1].x, p[1].y},
-			z_index = (t[13].z + t[14].z + t[4].z + t[9].z + t[1].z)/5}
-		facesD[7] = {list = {p[3].x, p[3].y, p[17].x, p[17].y, p[1].x, p[1].y, p[9].x, p[9].y, p[10].x, p[10].y},
-			z_index = (t[3].z + t[17].z + t[1].z + t[9].z + t[10].z)/5}
-		facesD[8] = {list = {p[7].x, p[7].y, p[14].x, p[14].y, p[4].x, p[4].y, p[18].x, p[18].y, p[20].x, p[20].y},
-			z_index = (t[7].z + t[14].z + t[4].z + t[18].z + t[20].z)/5}
-		facesD[9] = {list = {p[3].x, p[3].y, p[15].x, p[15].y, p[16].x, p[16].y, p[6].x, p[6].y, p[10].x, p[10].y},
-			z_index = (t[3].z + t[15].z + t[16].z + t[6].z + t[10].z)/5}
-		facesD[10] = {list = {p[5].x, p[5].y, p[12].x, p[12].y, p[8].x, p[8].y, p[16].x, p[16].y, p[15].x, p[15].y},
-			z_index = (t[5].z + t[12].z + t[8].z + t[16].z + t[15].z)/5}
-		facesD[11] = {list = {p[8].x, p[8].y, p[16].x, p[16].y, p[6].x, p[6].y, p[18].x, p[18].y, p[20].x, p[20].y},
-			z_index = (t[8].z + t[16].z + t[6].z + t[18].z + t[20].z)/5}
-		facesD[12] = {list = {p[6].x, p[6].y, p[18].x, p[18].y, p[4].x, p[4].y, p[9].x, p[9].y, p[10].x, p[10].y},
-			z_index = (t[6].z + t[18].z + t[4].z + t[9].z)/5}
+		facesD[1] = {verticles = {2, 11, 7, 14, 13}}
+		facesD[2] = {verticles = {2, 11, 12, 5, 19}}
+		facesD[3] = {verticles = {2, 13, 1, 17, 19}}
+		facesD[4] = {verticles = {11, 7, 20, 8, 12}}
+		facesD[5] = {verticles = {3, 17, 19, 5, 15}}
+		facesD[6] = {verticles = {13, 14, 4, 9, 1}}
+		facesD[7] = {verticles = {3, 17, 1, 9, 10}}
+		facesD[8] = {verticles = {7, 14, 4, 18, 20}}
+		facesD[9] = {verticles = {3, 15, 16, 6, 10}}
+		facesD[10] = {verticles = {5, 12, 8, 16, 15}}
+		facesD[11] = {verticles = {8, 16, 6, 18, 20}}
+		facesD[12] = {verticles = {6, 18, 4, 9, 10}}
+		Faces(facesD, t)
 		return facesD
 	end
 
@@ -182,26 +188,27 @@ Icosahedron.new = function(s, dx, dy, dz)
 	-- Створеня списку полінів та z-індексів
 	icosa.makeFaces = function(t, p)
 		facesIc = {}
-		facesIc[1] = {list = {p[1].x, p[1].y, p[2].x, p[2].y, p[11].x, p[11].y}, z_index = (t[1].z + t[2].z + t[11].z)/3}
-		facesIc[2] = {list = {p[2].x, p[2].y, p[3].x, p[3].y, p[11].x, p[11].y}, z_index = (t[2].z + t[3].z + t[11].z)/3}
-		facesIc[3] = {list = {p[3].x, p[3].y, p[4].x, p[4].y, p[11].x, p[11].y}, z_index = (t[3].z + t[4].z + t[11].z)/3}
-		facesIc[4] = {list = {p[4].x, p[4].y, p[5].x, p[5].y, p[11].x, p[11].y}, z_index = (t[4].z + t[5].z + t[11].z)/3}
-		facesIc[5] = {list = {p[5].x, p[5].y, p[1].x, p[1].y, p[11].x, p[11].y}, z_index = (t[5].z + t[1].z + t[11].z)/3}
-		facesIc[6] = {list = {p[6].x, p[6].y, p[7].x, p[7].y, p[12].x, p[12].y}, z_index = (t[6].z + t[7].z + t[12].z)/3}
-		facesIc[7] = {list = {p[7].x, p[7].y, p[8].x, p[8].y, p[12].x, p[12].y}, z_index = (t[7].z + t[8].z + t[12].z)/3}
-		facesIc[8] = {list = {p[8].x, p[8].y, p[9].x, p[9].y, p[12].x, p[12].y}, z_index = (t[8].z + t[9].z + t[12].z)/3}
-		facesIc[9] = {list = {p[9].x, p[9].y, p[10].x, p[10].y, p[12].x, p[12].y}, z_index = (t[9].z + t[10].z + t[12].z)/3}
-		facesIc[10] = {list = {p[10].x, p[10].y, p[6].x, p[6].y, p[12].x, p[12].y}, z_index = (t[10].z+ t[6].z + t[12].z)/3}
-		facesIc[11] = {list = {p[1].x, p[1].y, p[2].x, p[2].y, p[6].x, p[6].y}, z_index = (t[1].z + t[6].z + t[6].z)/3}
-		facesIc[12] = {list = {p[2].x, p[2].y, p[3].x, p[3].y, p[7].x, p[7].y}, z_index = (t[2].z + t[7].z + t[7].z)/3}
-		facesIc[13] = {list = {p[3].x, p[3].y, p[4].x, p[4].y, p[8].x, p[8].y}, z_index = (t[3].z + t[4].z + t[8].z)/3}
-		facesIc[14] = {list = {p[4].x, p[4].y, p[5].x, p[5].y, p[9].x, p[9].y}, z_index = (t[4].z + t[5].z + t[9].z)/3}
-		facesIc[15] = {list = {p[5].x, p[5].y, p[1].x, p[1].y, p[10].x, p[10].y}, z_index = (t[5].z + t[1].z + t[10].z)/3}
-		facesIc[16] = {list = {p[6].x, p[6].y, p[7].x, p[7].y, p[2].x, p[2].y}, z_index = (t[6].z + t[7].z + t[2].z)/3}
-		facesIc[17] = {list = {p[7].x, p[7].y, p[8].x, p[8].y, p[3].x, p[3].y}, z_index = (t[7].z + t[8].z + t[3].z)/3}
-		facesIc[18] = {list = {p[8].x, p[8].y, p[9].x, p[9].y, p[4].x, p[4].y}, z_index = (t[8].z + t[9].z + t[4].z)/3}
-		facesIc[19] = {list = {p[9].x, p[9].y, p[10].x, p[10].y, p[5].x, p[5].y}, z_index = (t[9].z + t[10].z + t[5].z)/3}
-		facesIc[20] = {list = {p[10].x, p[10].y, p[6].x, p[6].y, p[1].x, p[1].y}, z_index = (t[10].z+ t[6].z + t[1].z)/3}
+		facesIc[1] = {verticles = {1, 2, 11}}
+		facesIc[2] = {verticles = {2, 3, 11}}
+		facesIc[3] = {verticles = {3, 4, 11}}
+		facesIc[4] = {verticles = {4, 5, 11}}
+		facesIc[5] = {verticles = {5, 1, 11}}
+		facesIc[6] = {verticles = {6, 7, 12}}
+		facesIc[7] = {verticles = {7, 8, 12}}
+		facesIc[8] = {verticles = {8, 9, 12}}
+		facesIc[9] = {verticles = {9, 10, 12}}
+		facesIc[10] = {verticles = {10, 6, 12}}
+		facesIc[11] = {verticles = {1, 2, 6}}
+		facesIc[12] = {verticles = {2, 3, 7}}
+		facesIc[13] = {verticles = {3, 4, 8}}
+		facesIc[14] = {verticles = {4, 5, 9}}
+		facesIc[15] = {verticles = {5, 1, 10}}
+		facesIc[16] = {verticles = {6, 7, 2}}
+		facesIc[17] = {verticles = {7, 8, 3}}
+		facesIc[18] = {verticles = {8, 9, 4}}
+		facesIc[19] = {verticles = {9, 10, 5}}
+		facesIc[20] = {verticles = {10, 6, 1}}
+		Faces(facesIc, t)
 		return facesIc
 	end
 

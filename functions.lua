@@ -6,41 +6,17 @@ function projection(point)
 	return {x = point.x/b, y = point.y/b}
 end
 
--- Поворот навколо OZ
-function rotateZ(ob, alpha)
-	return {x = ob.x*math.cos(alpha)+ob.y*math.sin(alpha), 
-			y = -ob.x*math.sin(alpha)+ob.y*math.cos(alpha),
-			z = ob.z}
-end
-
--- Поворот навколо OY
-function rotateY(ob, alpha)
-	return {x = ob.x*math.cos(alpha)-ob.z*math.sin(alpha),
-			y = ob.y,
-			z = ob.x*math.sin(alpha)+ob.z*math.cos(alpha)}
-end
-
--- Поворот навколо OX
-function rotateX(ob, alpha)
-	return {x = ob.x, 
-			y = ob.y*math.cos(alpha)+ob.z*math.sin(alpha),
-			z = -ob.y*math.sin(alpha)+ob.z*math.cos(alpha)}
-end
-
--- Сортування і малювання полігонів
+-- Малювання полігонів
 function Draw(table_faces)
 	for j=1,#table_faces do
 		for i=1,#table_faces-1 do
-			if table_faces[i].z_index > table_faces[i+1].z_index then
+			if table_faces[i].z_min > table_faces[i+1].z_min then
 				temp = table_faces[i]
 				table_faces[i] = table_faces[i+1]
 				table_faces[i+1] = temp
 			end
 		end
 	end
-
-	
-
 	for i=1,#table_faces do
 		love.graphics.setColor(100, 220, 50)
 		love.graphics.polygon('fill', table_faces[i].list)

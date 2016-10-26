@@ -18,7 +18,7 @@ function love.load()
 	-------
 	p_1 = projection({x=-1000*vec0.a+point0.x, y=-1000*vec0.b+point0.y, z=-1000*vec0.c+point0.z})
 	p_2 = projection({x=1000*vec0.a+point0.x, y=1000*vec0.b+point0.y, z=1000*vec0.c+point0.z})
-	axis_face = {{list = {p_1.x, p_1.y, p_2.x, p_2.y, p_1.x, p_1.y}, z_index = 0}}
+	axis_face = {{list = {p_1.x, p_1.y, p_2.x, p_2.y, p_1.x, p_1.y}, z_min = 0}}
 end
 
 local speed = 0.01
@@ -42,7 +42,7 @@ function love.update()
 	for i=1,#u do
 		h[i] = projection(u[i])
 	end
-	allFaces = array_concat(v:makeFaces(p), u:makeFaces(h), axis_face)
+	allFaces = array_concat(v:makeFaces(p), u:makeFaces(h))
 	if love.keyboard.isDown('z') then
         speed = speed - 0.001
     end
